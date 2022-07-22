@@ -20,36 +20,35 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Widget? adBanner;
 
   @override
   void initState() {
     super.initState();
   }
 
-  _refresh() {
+  Future<CustomSearchAd> _loadAd() async {
+    Completer<CustomSearchAd> _completer = Completer();
     CustomSearchAd(
-        adUnitId: "ms-app-pub-9616389000213823",
+        adUnitId: "ms-app-pub-", // replace with valid adUnit id
         request: CustomSearchAdRequest(
             channel: '',
-            query: 'apple',
-            styleId: '0000000001',
+            query: 'flutter',
+            styleId: '',
             testAd: true
         ),
         listener: CustomSearchAdListener(
             onAdLoaded: (CustomSearchAd ad) {
-              setState(() {
-                adBanner = CustomSearchAdsWidget(ad: ad);
-              });
+              _completer.complete(ad);
             },
             onAdFailedToLoad: (CustomSearchAd ad) {
-              print("onAdFailedToLoad");
+              _completer.completeError("onAdFailedToLoad");
             },
             onAdHeightChanged: (CustomSearchAd ad, double height) {
               print("onAdHeightChanged: $height");
             }
         )
     ).load();
+    return _completer.future;
   }
 
   @override
@@ -61,11 +60,34 @@ class _MyAppState extends State<MyApp> {
             actions: [
               IconButton(
                 icon: Icon(Icons.refresh),
-                onPressed: _refresh,
+                onPressed: () {
+                  setState(() {});
+                },
               )
             ],
           ),
-          body: adBanner ?? Container()
+          body: Container(
+            child: Center(
+              child: Container(
+                child: FutureBuilder<CustomSearchAd>(
+                    future: _loadAd(),
+                    builder: (BuildContext context, AsyncSnapshot<CustomSearchAd> snapshot) {
+                      if (snapshot.hasError) {
+                        return Container(
+                          child: Text("Serch Ad Load Error"),
+                        );
+                      }
+                      if (snapshot.data == null) {
+                        return Container(
+                          child: Text("Serch Ad Loading..."),
+                        );
+                      }
+                      return CustomSearchAdsWidget(ad: snapshot.data!);
+                    }
+                ),
+              ),
+            ),
+          )
       ),
     );
   }

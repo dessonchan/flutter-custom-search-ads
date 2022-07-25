@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_custom_search_ads/DataModel/Ads/CustomSearchAd.dart';
 import 'package:flutter_custom_search_ads/DataModel/Ads/CustomSearchAdListener.dart';
 import 'package:flutter_custom_search_ads/DataModel/Ads/CustomSearchAdRequest.dart';
 import 'package:flutter_custom_search_ads/UI/CustomSearchAdsWidget.dart';
-import 'package:flutter_custom_search_ads/flutter_custom_search_ads.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -38,9 +37,11 @@ class _MyAppState extends State<MyApp> {
         ),
         listener: CustomSearchAdListener(
             onAdLoaded: (CustomSearchAd ad) {
+              print("onAdLoaded");
               _completer.complete(ad);
             },
             onAdFailedToLoad: (CustomSearchAd ad) {
+              print("onAdFailToLoad");
               _completer.completeError("onAdFailedToLoad");
             },
             onAdHeightChanged: (CustomSearchAd ad, double height) {

@@ -1,29 +1,40 @@
 package com.example.flutter_custom_search_ads
 
 import androidx.annotation.NonNull
+import com.example.flutter_custom_search_ads.UI.CustomSearchAdsViewFactory
+import com.example.flutter_custom_search_ads.classes.AdInstanceManager
+import io.flutter.Log
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.lang.Exception
+import kotlin.math.log
+
+var adInstanceManager: AdInstanceManager? = null
 
 /** FlutterCustomSearchAdsPlugin */
 class FlutterCustomSearchAdsPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_custom_search_ads")
-    channel.setMethodCallHandler(this)
+      flutterPluginBinding.platformViewRegistry.registerViewFactory("customSearchAds", CustomSearchAdsViewFactory())
+
+      channel = MethodChannel(flutterPluginBinding.binaryMessenger, "plugins.dessonchan.com/flutter-custom-search-ads")
+      channel.setMethodCallHandler(this)
+
+      adInstanceManager = AdInstanceManager(channel, flutterPluginBinding.applicationContext)
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
+  override fun onMethodCall(call: MethodCall, result: Result) {
+    if (call.method == "onAdLoad") {
+      var adId = call.argument<Int>("adId")
+      if (adId != null) {
+        adInstanceManager?.loadAd(adId, call.arguments as Map<String, Any>)
+        result.success("")
+      }
     } else {
       result.notImplemented()
     }

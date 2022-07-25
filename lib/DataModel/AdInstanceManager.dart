@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_custom_search_ads/DataModel/Ads/CustomSearchAd.dart';
 
@@ -5,12 +7,14 @@ AdInstanceManager instanceManager = AdInstanceManager();
 
 class AdInstanceManager {
   Map<int, CustomSearchAd> _loadedAds = {};
-  int _nextAdId = 0;
+  int _nextAdId = 100;
   late MethodChannel channel;
 
   AdInstanceManager() {
     channel = const MethodChannel('plugins.dessonchan.com/flutter-custom-search-ads');
     channel.setMethodCallHandler((call) async {
+      print("onAdEvent : $call");
+      print(_loadedAds);
       final int? adId = call.arguments['adId'];
       final String eventName = call.method;
       if (adId != null) {

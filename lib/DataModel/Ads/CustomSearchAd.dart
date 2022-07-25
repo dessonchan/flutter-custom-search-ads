@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_custom_search_ads/DataModel/AdInstanceManager.dart';
 
@@ -10,6 +14,7 @@ class CustomSearchAd {
   late CustomSearchAdListener listener;
 
   ValueNotifier<double> adHeight = ValueNotifier<double>(0);
+  Timer? renderFallbackTimer;
 
   CustomSearchAd({
     required this.adUnitId,
@@ -29,9 +34,15 @@ class CustomSearchAd {
   }
 
   onAdLoad() {
-    print("onAdLoaded");
     if (listener.onAdLoaded != null) {
       listener.onAdLoaded!(this);
+    }
+    if (Platform.isAndroid) {
+      adHeight.value = max(1, adHeight.value);
+      renderFallbackTimer = Timer(const Duration(seconds: 1), () {
+        //reset ad height to 0 if no onAdHeightChanged call in 1 sec (assume layout fail)
+        adHeight.value = 0;
+      });
     }
   }
 
@@ -46,6 +57,8 @@ class CustomSearchAd {
       listener.onAdHeightChanged!(this, height);
     }
     adHeight.value = height;
+    renderFallbackTimer?.cancel();
+    renderFallbackTimer = null;
   }
 
   onAdImpression() {

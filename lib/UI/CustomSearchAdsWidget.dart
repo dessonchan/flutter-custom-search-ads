@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,16 +23,31 @@ class _CustomSearchAdsWidgetState extends State<CustomSearchAdsWidget> {
     return ValueListenableBuilder<double>(
       valueListenable: widget.ad.adHeight,
       builder: (BuildContext context, double height, Widget? widget) {
-        return SizedBox(
-          height: height,
-          child: widget,
+        return Stack(
+          children: [
+            SizedBox(
+              height: height,
+              child: Container(
+                // decoration: BoxDecoration(
+                //     border: Border.all(color: Colors.red)
+                // ),
+                child: widget,
+              ),
+            ),
+          ],
         );
       },
       child: Builder(
         builder: (BuildContext context) {
           switch (defaultTargetPlatform) {
             case TargetPlatform.android:
-              throw UnsupportedError('Unsupported platform view');
+              return AndroidView(
+                viewType: viewType,
+                creationParams: {
+                  "adId": instanceManager.adIdFor(widget.ad),
+                },
+                creationParamsCodec: StandardMessageCodec(),
+              );
             case TargetPlatform.iOS:
               return UiKitView(
                 viewType: viewType,

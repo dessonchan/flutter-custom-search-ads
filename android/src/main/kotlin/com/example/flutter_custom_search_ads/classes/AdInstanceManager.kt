@@ -8,19 +8,11 @@ import com.example.flutter_custom_search_ads.classes.CustomSearchAd
 import com.google.android.gms.ads.AdListener
 import io.flutter.embedding.android.FlutterActivity
 
-class AdInstanceManager(channel: MethodChannel, context: Context) {
-    var context: Context
-    private var channel: MethodChannel
-    var loadedAds: MutableMap<Int, CustomSearchAd>
-
-    init {
-        this.context = context
-        this.channel = channel
-        loadedAds = mutableMapOf<Int, CustomSearchAd>()
-    }
+class AdInstanceManager(val channel: MethodChannel, val context: Context) {
+    var loadedAds: MutableMap<Int, CustomSearchAd> = mutableMapOf<Int, CustomSearchAd>()
 
     fun loadAd(adId: Int, arguments:Map<String, Any>) {
-        var ad = CustomSearchAd(this, adId,
+        val ad = CustomSearchAd(this, adId,
             arguments["adUnitId"] as String,
             arguments["query"] as String,
             arguments["testAd"] as Boolean,

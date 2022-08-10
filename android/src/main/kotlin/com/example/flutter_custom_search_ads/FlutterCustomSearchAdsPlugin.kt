@@ -47,7 +47,9 @@ class FlutterCustomSearchAdsPlugin: FlutterPlugin, MethodCallHandler, ActivityAw
   }
 
   /**
-   * Since
+   * Since search ad needs an activity instance of context
+   * we can get the activity by implementing ActivityAware
+   * https://stackoverflow.com/questions/59887901/get-activity-reference-in-flutter-plugin
    */
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     activity = binding.activity as FlutterActivity

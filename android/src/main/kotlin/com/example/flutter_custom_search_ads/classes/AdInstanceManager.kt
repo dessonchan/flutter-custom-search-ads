@@ -6,6 +6,7 @@ import java.util.*
 
 import com.example.flutter_custom_search_ads.classes.CustomSearchAd
 import com.google.android.gms.ads.AdListener
+import io.flutter.embedding.android.FlutterActivity
 
 class AdInstanceManager(channel: MethodChannel, context: Context) {
     var context: Context
@@ -61,5 +62,9 @@ class AdInstanceManager(channel: MethodChannel, context: Context) {
 
     fun onAdWillDismissScreen(ad: CustomSearchAd) {
         channel.invokeMethod("onAdWillDismissScreen", mapOf<String, Any>(Pair("adId", ad.adId)))
+    }
+
+    fun onAdClicked(ad: CustomSearchAd) {
+        channel.invokeMethod("onAdClicked", mapOf<String, Any>(Pair("adId", ad.adId)))
     }
 }

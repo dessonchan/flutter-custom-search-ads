@@ -17,7 +17,7 @@ A new Flutter project.
   s.dependency 'Flutter'
   s.platform = :ios, '10.0'
   
-  s.dependency 'Google-Mobile-Ads-SDK', '9.6.0'
+  s.dependency 'Google-Mobile-Ads-SDK', '9.13'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

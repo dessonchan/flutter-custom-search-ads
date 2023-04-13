@@ -67,26 +67,18 @@ class _MyAppState extends State<MyApp> {
               )
             ],
           ),
-          body: Container(
-            child: Center(
-              child: Container(
-                child: FutureBuilder<CustomSearchAd>(
-                    future: _loadAd(),
-                    builder: (BuildContext context, AsyncSnapshot<CustomSearchAd> snapshot) {
-                      if (snapshot.hasError) {
-                        return Container(
-                          child: Text("Serch Ad Load Error"),
-                        );
-                      }
-                      if (snapshot.data == null) {
-                        return Container(
-                          child: Text("Serch Ad Loading..."),
-                        );
-                      }
-                      return CustomSearchAdsWidget(ad: snapshot.data!);
-                    }
-                ),
-              ),
+          body: Center(
+            child: FutureBuilder<CustomSearchAd>(
+                future: _loadAd(),
+                builder: (BuildContext context, AsyncSnapshot<CustomSearchAd> snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text("Search Ad Load Error");
+                  }
+                  if (snapshot.data == null) {
+                    return const Text("Search Ad Loading...");
+                  }
+                  return CustomSearchAdsWidget(ad: snapshot.data!);
+                }
             ),
           )
       ),

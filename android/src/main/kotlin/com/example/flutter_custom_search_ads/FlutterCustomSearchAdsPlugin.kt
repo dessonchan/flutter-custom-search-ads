@@ -1,10 +1,9 @@
 package com.example.flutter_custom_search_ads
 
-import android.util.Log
+import android.app.Activity
 import androidx.annotation.NonNull
 import com.example.flutter_custom_search_ads.UI.CustomSearchAdsViewFactory
 import com.example.flutter_custom_search_ads.classes.AdInstanceManager
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -19,7 +18,7 @@ var adInstanceManager: AdInstanceManager? = null
 /** FlutterCustomSearchAdsPlugin */
 class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
-    private lateinit var activity: FlutterActivity
+    private lateinit var activity: Activity
     private lateinit var binaryMessenger: BinaryMessenger
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -55,7 +54,7 @@ class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityA
      * https://stackoverflow.com/questions/59887901/get-activity-reference-in-flutter-plugin
      */
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity as FlutterActivity
+        activity = binding.activity
         channel = MethodChannel(binaryMessenger, "plugins.dessonchan.com/flutter-custom-search-ads")
         channel.setMethodCallHandler(this)
         adInstanceManager = AdInstanceManager(channel, activity)

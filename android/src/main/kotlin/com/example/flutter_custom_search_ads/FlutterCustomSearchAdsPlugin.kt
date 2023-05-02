@@ -17,9 +17,9 @@ var adInstanceManager: AdInstanceManager? = null
 
 /** FlutterCustomSearchAdsPlugin */
 class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-    private lateinit var channel: MethodChannel
-    private lateinit var activity: Activity
-    private lateinit var binaryMessenger: BinaryMessenger
+    private var channel: MethodChannel? = null
+    private var activity: Activity? = null
+    private var binaryMessenger: BinaryMessenger? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         binaryMessenger = flutterPluginBinding.binaryMessenger
@@ -42,10 +42,7 @@ class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        // check the channel is isInitialized or not
-        if (this::channel.isInitialized) {
-            channel.setMethodCallHandler(null)
-        }
+        channel?.setMethodCallHandler(null)
     }
 
     /**
@@ -55,9 +52,13 @@ class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityA
      */
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
-        channel = MethodChannel(binaryMessenger, "plugins.dessonchan.com/flutter-custom-search-ads")
-        channel.setMethodCallHandler(this)
-        adInstanceManager = AdInstanceManager(channel, activity)
+        binaryMessenger?.let { messenger ->
+            channel = MethodChannel(messenger, "plugins.dessonchan.com/flutter-custom-search-ads")
+            channel?.setMethodCallHandler(this)
+            activity?.let {
+                adInstanceManager = AdInstanceManager(channel!!, it)
+            }
+        }
     }
 
     override fun onDetachedFromActivityForConfigChanges() {

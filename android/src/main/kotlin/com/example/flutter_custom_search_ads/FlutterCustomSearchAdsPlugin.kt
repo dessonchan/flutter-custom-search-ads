@@ -1,10 +1,10 @@
 package com.example.flutter_custom_search_ads
 
-import android.util.Log
+import android.app.Activity
+import android.content.Context
 import androidx.annotation.NonNull
 import com.example.flutter_custom_search_ads.UI.CustomSearchAdsViewFactory
 import com.example.flutter_custom_search_ads.classes.AdInstanceManager
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -18,12 +18,13 @@ var adInstanceManager: AdInstanceManager? = null
 
 /** FlutterCustomSearchAdsPlugin */
 class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-    private lateinit var channel: MethodChannel
-    private lateinit var activity: FlutterActivity
-    private lateinit var binaryMessenger: BinaryMessenger
+    private var channel: MethodChannel? = null
+    private var binaryMessenger: BinaryMessenger? = null
+    private var context: Context? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         binaryMessenger = flutterPluginBinding.binaryMessenger
+        context = flutterPluginBinding.applicationContext
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             "customSearchAds",
             CustomSearchAdsViewFactory()
@@ -43,10 +44,7 @@ class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        // check the channel is isInitialized or not
-        if (this::channel.isInitialized) {
-            channel.setMethodCallHandler(null)
-        }
+        channel?.setMethodCallHandler(null)
     }
 
     /**
@@ -55,10 +53,13 @@ class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityA
      * https://stackoverflow.com/questions/59887901/get-activity-reference-in-flutter-plugin
      */
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity as FlutterActivity
-        channel = MethodChannel(binaryMessenger, "plugins.dessonchan.com/flutter-custom-search-ads")
-        channel.setMethodCallHandler(this)
-        adInstanceManager = AdInstanceManager(channel, activity)
+        binaryMessenger?.let { messenger ->
+            channel = MethodChannel(messenger, "plugins.dessonchan.com/flutter-custom-search-ads")
+            channel?.setMethodCallHandler(this)
+        }
+        adInstanceManager = context?.let {
+            AdInstanceManager(channel!!, it)
+        }
     }
 
     override fun onDetachedFromActivityForConfigChanges() {

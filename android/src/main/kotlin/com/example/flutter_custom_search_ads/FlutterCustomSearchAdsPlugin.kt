@@ -20,11 +20,10 @@ var adInstanceManager: AdInstanceManager? = null
 class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var channel: MethodChannel? = null
     private var binaryMessenger: BinaryMessenger? = null
-    private var context: Context? = null
+    private var activity: Activity? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         binaryMessenger = flutterPluginBinding.binaryMessenger
-        context = flutterPluginBinding.applicationContext
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             "customSearchAds",
             CustomSearchAdsViewFactory()
@@ -57,7 +56,8 @@ class FlutterCustomSearchAdsPlugin : FlutterPlugin, MethodCallHandler, ActivityA
             channel = MethodChannel(messenger, "plugins.dessonchan.com/flutter-custom-search-ads")
             channel?.setMethodCallHandler(this)
         }
-        adInstanceManager = context?.let {
+        activity = binding.activity
+        adInstanceManager = activity?.let {
             AdInstanceManager(channel!!, it)
         }
     }

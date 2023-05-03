@@ -1,5 +1,6 @@
 package com.example.flutter_custom_search_ads.classes
 
+import android.app.Activity
 import android.content.Context
 import io.flutter.plugin.common.MethodChannel
 import java.util.*
@@ -8,7 +9,7 @@ import com.example.flutter_custom_search_ads.classes.CustomSearchAd
 import com.google.android.gms.ads.AdListener
 import io.flutter.embedding.android.FlutterActivity
 
-class AdInstanceManager(val channel: MethodChannel, val context: Context) {
+class AdInstanceManager(val channel: MethodChannel, val activity: Activity) {
     var loadedAds: MutableMap<Int, CustomSearchAd> = mutableMapOf<Int, CustomSearchAd>()
 
     fun loadAd(adId: Int, arguments:Map<String, Any>) {

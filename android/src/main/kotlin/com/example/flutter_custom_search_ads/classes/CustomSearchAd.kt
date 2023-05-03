@@ -15,7 +15,7 @@ class CustomSearchAd(val manager: AdInstanceManager,
                      val styleId: String
 ): AdListener() {
 
-    var searchBanner: SearchAdView = SearchAdView(manager.context)
+    var searchBanner: SearchAdView = SearchAdView(manager.activity)
 
     init {
         searchBanner.setAdSize(AdSize.SEARCH)
